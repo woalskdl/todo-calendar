@@ -1,7 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import {runPracticeDayjs} from './src/practice-dayjs';
+import { useEffect } from 'react';
 
 export default function App() {
+  useEffect(() => {
+    runPracticeDayjs();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
