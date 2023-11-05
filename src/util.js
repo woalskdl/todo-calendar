@@ -1,4 +1,11 @@
 import dayjs from "dayjs";
+import {getStatusBarHeight, getBottomSpace} from 'react-native-iphone-x-helper';
+
+/* IOS 키보드 on / off >> cmd + shift + k */
+
+export const statusBarHeight = getStatusBarHeight(true);
+export const bottomSpace = getBottomSpace();
+export const ITEM_WIDTH = 220;
 
 export const fillEmptyColumns = (columns, start, end) => {
   const filledColumns = columns.slice(0);
