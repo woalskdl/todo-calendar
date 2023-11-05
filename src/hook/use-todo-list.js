@@ -27,6 +27,9 @@ export const useTodoList = (selectedDate) => {
   const [input, setInput] = useState('');
 
   const addTodo = () => {
+    if (!input)
+      return;
+    
     const length = todoList.length;
     const lastId = length === 0 ? 0 : todoList[length - 1].id;
 
@@ -60,12 +63,17 @@ export const useTodoList = (selectedDate) => {
     )
   }
 
+  const resetInput = () => {
+    setInput('');
+  }
+
   return {
     todoList,
     addTodo,
     removeTodo,
     toggleTodo,
     input,
-    setInput
+    setInput,
+    resetInput
   }
 }

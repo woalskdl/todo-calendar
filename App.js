@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useEffect, useState } from 'react';
+import { Alert, FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
 import dayjs from "dayjs"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Ionicons } from '@expo/vector-icons';
@@ -33,10 +33,12 @@ export default function App() {
     removeTodo,
     toggleTodo,
     input,
-    setInput
+    setInput,
+    resetInput
   } = useTodoList(selectedDate);
   
   const columns = getCalendarColumns(selectedDate);
+  const flatListRef = useRef(null);
 
   const onPressLeftArrow = subtract1Month;
   const onPressHeaderDate = showDatePicker;
@@ -69,8 +71,24 @@ export default function App() {
 
   const renderItem = ({ item : todo }) => {
     const isSuccess = todo.isSuccess;
+    const onPress = () => toggleTodo(todo.id);
+    const onLongPress = () => {
+      Alert.alert('삭제하시겠어요?', '', [
+        {
+          style: 'cancel',
+          text: '아니오'
+        },
+        {
+          text: '네',
+          onPress: () => removeTodo(todo.id)
+        }
+      ])
+    }
+
     return (
-      <View 
+      <Pressable
+        onPress={onPress} 
+        onLongPress={onLongPress}
         style={{ 
           width: ITEM_WIDTH, 
           alignSelf: 'center',
@@ -88,12 +106,30 @@ export default function App() {
           size={17}
           color={isSuccess ? '#595959' : '#bfbfbf'}
         />
-      </View>
+      </Pressable>
     )
   }
 
-  const onPressAdd = () => {
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd();
+    }, 200);
+  }
 
+  const onPressAdd = () => {
+    addTodo();
+    resetInput();
+    scrollToEnd();
+  }
+
+  const onSubmitEditing = () => {
+    addTodo();
+    resetInput();
+    scrollToEnd();
+  }
+
+  const onFocus = () => {
+    scrollToEnd();
   }
 
   useEffect(() => {
@@ -120,10 +156,13 @@ export default function App() {
       >
         <View style={{flex: 1}}>
           <FlatList
+            ref={flatListRef}
             data={todoList}
             ListHeaderComponent={ListHeaderComponent}
-            contentContainerStyle={{paddingTop: statusBarHeight}}
+            contentContainerStyle={{paddingTop: statusBarHeight + 30}}
             renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            style={{ flex: 1 }}
           />
 
           <AddTodoInput
@@ -131,6 +170,8 @@ export default function App() {
             onChangeText={setInput}
             placeholder={`${dayjs(selectedDate).format('MM.D')}에 추가할 TODO`}
             onPressAdd={onPressAdd}
+            onSubmitEditing={onSubmitEditing}
+            onFocus={onFocus}
           />
         </View>
       </KeyboardAvoidingView>
