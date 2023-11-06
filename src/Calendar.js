@@ -8,7 +8,7 @@ import Margin from "./Margin";
 
 const columnSize = 35;
 
-const Column = ({text, color, opacity, disabled, onPress, isSelected}) => {
+const Column = ({text, color, opacity, disabled, onPress, isSelected, hasTodo}) => {
   return (
       <TouchableOpacity 
         disabled={disabled}
@@ -21,7 +21,7 @@ const Column = ({text, color, opacity, disabled, onPress, isSelected}) => {
           backgroundColor: isSelected ? '#c2c2c2': 'transparent',
           borderRadius: columnSize / 2
         }}>
-        <Text style={{color, opacity}}>{text}</Text>
+        <Text style={{color, opacity, fontWeight: hasTodo ? 'bold' : 'normal'}}>{text}</Text>
       </TouchableOpacity>
   );
 }
@@ -35,6 +35,7 @@ const ArrowButton = ({onPress, iconName}) => {
 }
 
 export default ({
+  todoList,
   columns,
   selectedDate,
   onPressLeftArrow,
@@ -50,6 +51,7 @@ export default ({
     const isCurrentMonth = dayjs(date).isSame(selectedDate, 'month');
     const onPress = () => onPressDate(date);
     const isSelected = dayjs(date).isSame(selectedDate, 'date');
+    const hasTodo = todoList.find(todo => dayjs(todo.date).isSame(dayjs(date), 'date'))
 
     return (
       <Column 
@@ -58,6 +60,7 @@ export default ({
         opacity={isCurrentMonth ? 1 : 0.4}
         onPress={onPress}
         isSelected={isSelected}
+        hasTodo={hasTodo}
       />
     )
   };
