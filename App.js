@@ -28,7 +28,7 @@ export default function App() {
   } = useCalendar(now);
 
   const {
-    todoList,
+    filteredTodoList,
     addTodo,
     removeTodo,
     toggleTodo,
@@ -89,7 +89,7 @@ export default function App() {
       <Pressable
         onPress={onPress} 
         onLongPress={onLongPress}
-        style={{ 
+        style={{
           width: ITEM_WIDTH, 
           alignSelf: 'center',
           paddingVertical: 10,
@@ -157,7 +157,7 @@ export default function App() {
         <View style={{flex: 1}}>
           <FlatList
             ref={flatListRef}
-            data={todoList}
+            data={filteredTodoList}
             ListHeaderComponent={ListHeaderComponent}
             contentContainerStyle={{paddingTop: statusBarHeight + 30}}
             renderItem={renderItem}
